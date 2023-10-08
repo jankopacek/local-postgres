@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  pg-db:
+    image: postgres:15
+    env_file:
+      - .env
+      - .secrets
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d postgres -U $POSTGRES_USER" ]
+      interval: 2s
+      retries: 10
+    ports:
+      - 5432:5432
+    volumes:
+      - ./postgresql_databases.sql:/docker-entrypoint-initdb.d/postgresql_databases.sql
+      - pg-data:/var/lib/postgresql/data
+  
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+volumes:
+  pg-data:
